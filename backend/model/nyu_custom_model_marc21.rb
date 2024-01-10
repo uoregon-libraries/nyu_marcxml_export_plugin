@@ -21,7 +21,7 @@ class MARCModel < ASpaceExport::ExportModel
 
   @resource_map = {
     [:id_0, :id_1, :id_2, :id_3] => :handle_id,
-    [:ead_location] => :handle_ead_loc,
+    [:publish, :uri, :title, :id_0] => :finding_aid_loc,
     [:id, :jsonmodel_type] => :handle_ark,
     :notes => :handle_notes,
     :finding_aid_description_rules => df_handler('fadr', '040', ' ', ' ', 'e')
@@ -103,7 +103,7 @@ class MARCModel < ASpaceExport::ExportModel
   def self.from_resource(obj, opts = {})
     marc = self.from_archival_object(obj, opts)
     marc.apply_map(obj, @resource_map)
-    marc.leader_string = "00000np$aa2200000 u 4500"
+    marc.leader_string = "00000np$aa2200000 i 4500"
     marc.leader_string[7] = obj.level == 'item' ? 'm' : 'c'
 
     marc.controlfield_string = assemble_controlfield_string(obj)
@@ -114,7 +114,7 @@ class MARCModel < ASpaceExport::ExportModel
 
   def self.assemble_controlfield_string(obj)
     date = obj.dates[0] || {}
-    string = obj['system_mtime'].scan(/\d{2}/)[1..3].join('')
+    string = obj['user_mtime'].scan(/\d{2}/)[1..3].join('')
     string += date['date_type'] == 'single' ? 's' : 'i'
     string += date['begin'] ? date['begin'][0..3] : "    "
     string += date['end'] ? date['end'][0..3] : "    "
@@ -621,7 +621,7 @@ class MARCModel < ASpaceExport::ExportModel
     end
   end
 
-
+  # do not use, see next
   # 3/28/18: Updated: ANW-318
   def handle_ead_loc(ead_loc)
     ## plugin add 555 with ead location.
@@ -633,6 +633,29 @@ class MARCModel < ASpaceExport::ExportModel
       ['y', "Finding aid online"],
       ['u', ead_loc]
     )
+  end
+
+  # use instead of ead loc
+  def finding_aid_loc(publish, uri, title, id_0)
+    if publish
+      df('555', ' ', ' ').with_sfs(
+        ['a', "Finding aid available online:"],
+        ['u', "#{AppConfig[:public_url]}#{uri}"]
+      )
+      df('856', '4', '2').with_sfs(
+        ['z', "Connect to the online finding aid for this collection"],
+        ['u', "#{AppConfig[:public_url]}#{uri}"]
+      )
+    else
+      df('856', '4', '2').with_sfs(
+        ['z', "Notice of Interest in Unprocessed Collections"],
+        ['u', "https://library.uoregon.edu/scua/unprocessed-collections?title=#{format_title(title)}&callnumber=#{format_title(id_0)}"]
+      )
+    end
+  end
+
+  def format_title(title)
+    title.gsub(" ","-")
   end
 
   def handle_ark(id, type='resource')

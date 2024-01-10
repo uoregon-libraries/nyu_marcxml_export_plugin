@@ -18,9 +18,6 @@ class MARCCustomFieldSerialize
 
   def controlfields
     cf = []
-    org_codes = %w(NNU-TL NNU-F NyNyUA NyNyUAD NyNyUCH NBPol NyBlHS NHi)
-    org_code = get_repo_org_code
-    cf << add_003_tag(org_code) if org_codes.include?(org_code)
     cf << add_005_tag
     @record.controlfields = cf
   end
@@ -31,8 +28,8 @@ class MARCCustomFieldSerialize
     @field_pairs = []
 
     # Do this on all records
-    extra_fields << add_024_tag
-    extra_fields << add_035_tag
+    # extra_fields << add_024_tag
+    # extra_fields << add_035_tag
 
     # Only process the 853, 863 and 949 if the records is from tamwag, fales, nyuarchives, or Poly Archives
     if(get_allowed_values.has_key?(get_record_repo_value)) then
