@@ -5,4 +5,4 @@ require_relative 'lib/aspace_extensions'
 
 MARCSerializer.add_decorator(MARCCustomFieldSerialize)
 
-ENV['33X_MAP_PATH'] = File.join(ASUtils.find_base_directory, "plugins", "nyu_marcxml_export_plugin", "backend", "33x_map.json")
+ENV['MAP_33X_PATH'] = File.join(ASUtils.find_base_directory, "plugins", "nyu_marcxml_export_plugin", "backend", "map_33x.json")

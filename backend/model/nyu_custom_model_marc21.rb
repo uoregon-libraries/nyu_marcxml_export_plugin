@@ -371,7 +371,7 @@ class MARCModel < ASpaceExport::ExportModel
 
   def content_media_carrier(terms)
     terms.each do |t|
-      hash = 33x_lookup(t['id'])
+      hash = lookup_33x(t['id'])
       next if hash.nil?
       hash['subfields'].keys.each do |key|
         code = key
@@ -384,12 +384,12 @@ class MARCModel < ASpaceExport::ExportModel
     end
   end
 
-  def 33x_map
-    @33x_map ||= JSON.load_file(ENV['33X_MAP_PATH'])
+  def map_33x
+    @map_33x ||= JSON.load_file(ENV['MAP_33X_PATH'])
   end
 
-  def 33x_lookup(subj_id)
-    33x_map.select{|x| x['id'] == subj_id}.first
+  def lookup_33x(subj_id)
+    map_33x.select{|x| x['id'] == subj_id}.first
   end
 
   def handle_primary_creator(linked_agents)
