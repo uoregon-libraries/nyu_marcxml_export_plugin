@@ -1,0 +1,28 @@
+[
+  {"id":"2538","term":"Photographs","subfields":
+    {"336": {"a":"still image","b":"sti","2":"rdacontent"},
+     "337": {"a":"unmediated","b":"n","2":"rdamedia"},
+     "338": {"a":"sheet","b":"nb","2":"rdacarrier"}
+    }
+  },
+  {"id":"2414","term":"Moving images","subfields":
+    {"336": {"a":"two-dimensional moving image","b":"tdi","2":"rdacontent"}
+    }
+  },
+  {"id":"","term":"Documents","subfields":
+    {"336": {"a":"text","b":"txt","2":"rdacontent"},
+     "337": {"a":"unmediated","b":"n","2":"rdamedia"},
+     "338": {"a":"sheet","b":"nb","2":"rdacarrier"}
+    }
+  },
+  {"id":"","term":"Books","subfields":
+    {"336": {"a":"text","b":"txt","2":"rdacontent"},
+     "337": {"a":"unmediated","b":"n","2":"rdamedia"},
+     "338": {"a":"volume","b":"nc","2":"rdacarrier"}
+    }
+  },
+  {"id":"1140","term":"Sound Recordings","subfields":
+    {"337": {"a":"audio","b":"s","2":"rdamedia"}
+    }
+  }
+]

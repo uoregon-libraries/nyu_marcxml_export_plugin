@@ -23,7 +23,7 @@ class MARCModel < ASpaceExport::ExportModel
     [:id_0, :id_1, :id_2, :id_3] => :handle_id,
     [:publish, :uri, :title, :id_0] => :finding_aid_loc,
     [:id, :jsonmodel_type] => :handle_ark,
-    :notes => :handle_notes,
+    [:notes, :publish] => :handle_notes,
     :finding_aid_description_rules => df_handler('fadr', '040', ' ', ' ', 'e')
   }
 
@@ -369,6 +369,28 @@ class MARCModel < ASpaceExport::ExportModel
     end
   end
 
+  def content_media_carrier(terms)
+    terms.each do |t|
+      hash = 33x_lookup(t['id'])
+      next if hash.nil?
+      hash['subfields'].keys.each do |key|
+        code = key
+        sfs = []
+        hash[key].each do |k,v|
+          sfs << [k, v]
+        end
+        df(code, " ", " ").with_sfs(*sfs)
+      end
+    end
+  end
+
+  def 33x_map
+    @33x_map ||= JSON.load_file(ENV['33X_MAP_PATH'])
+  end
+
+  def 33x_lookup(subj_id)
+    33x_map.select{|x| x['id'] == subj_id}.first
+  end
 
   def handle_primary_creator(linked_agents)
     link = linked_agents.find{|a| a['role'] == 'creator'}
@@ -470,6 +492,8 @@ class MARCModel < ASpaceExport::ExportModel
       terms = link['terms']
       ind2 = source_to_code(name['source'])
 
+      content_media_carrier(terms)
+
       relator_sfs = []
       if link['relator']
         handle_relators(relator_sfs, link['relator'])
@@ -535,7 +559,7 @@ class MARCModel < ASpaceExport::ExportModel
   end
 
   ## plugin -- nyu local handle_notes method def
-  def handle_notes(notes)
+  def handle_notes(notes, publish)
 
     notes.each do |note|
 
@@ -556,7 +580,7 @@ class MARCModel < ASpaceExport::ExportModel
                   when 'arrangement', 'fileplan'
                     ['351', 'b']
                   when 'odd', 'dimensions', 'physdesc', 'materialspec', 'physloc', 'phystech', 'physfacet', 'processinfo', 'separatedmaterial'
-                    ['500','a']
+                    ['500','a'] if publish
                   when 'accessrestrict'
                     ['506','a']
                     #when 'scopecontent'
