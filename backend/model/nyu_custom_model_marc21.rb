@@ -301,6 +301,7 @@ class MARCModel < ASpaceExport::ExportModel
   def handle_subjects(subjects)
     subjects.each do |link|
       subject = link['_resolved']
+      content_media_carrier(subject['terms'])
       term, *terms = subject['terms']
       ind1 = ' '
       code, *ind2 =  case term['term_type']
@@ -371,15 +372,16 @@ class MARCModel < ASpaceExport::ExportModel
 
   def content_media_carrier(terms)
     terms.each do |t|
-      hash = lookup_33x(t['id'])
+      id = t['uri'].gsub("/terms/","")
+      hash = lookup_33x(id)
       next if hash.nil?
       hash['subfields'].keys.each do |key|
         code = key
         sfs = []
-        hash[key].each do |k,v|
+        hash['subfields'][key].each do |k,v|
           sfs << [k, v]
         end
-        df(code, " ", " ").with_sfs(*sfs)
+        df!(code, " ", " ").with_sfs(*sfs)
       end
     end
   end
