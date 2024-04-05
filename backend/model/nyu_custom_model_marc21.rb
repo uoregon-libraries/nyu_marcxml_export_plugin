@@ -390,8 +390,8 @@ class MARCModel < ASpaceExport::ExportModel
     @map_33x ||= JSON.load_file(ENV['MAP_33X_PATH'])
   end
 
-  def lookup_33x(subj_id)
-    map_33x.select{|x| x['id'] == subj_id}.first
+  def lookup_33x(id)
+    map_33x.select{|x| x['term_id'] == id}.first
   end
 
   def handle_primary_creator(linked_agents)
@@ -493,8 +493,6 @@ class MARCModel < ASpaceExport::ExportModel
       relator = link['relator']
       terms = link['terms']
       ind2 = source_to_code(name['source'])
-
-      content_media_carrier(terms)
 
       relator_sfs = []
       if link['relator']
