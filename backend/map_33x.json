@@ -1,0 +1,44 @@
+[
+  {"subject_id":"5473","term_id":"2538","term":"Photographs","subfields":
+    {"336": {"a":"still image","b":"sti","2":"rdacontent"},
+     "337": {"a":"unmediated","b":"n","2":"rdamedia"},
+     "338": {"a":"sheet","b":"nb","2":"rdacarrier"}
+    }
+  },
+  {"subject_id":"3609","term_id":"2414","term":"Moving images","subfields":
+    {"336": {"a":"two-dimensional moving image","b":"tdi","2":"rdacontent"}
+    }
+  },
+  {"subject_id":"24275","term_id":"18944","term":"Texts (Documents)","subfields":
+    {"336": {"a":"text","b":"txt","2":"rdacontent"},
+     "337": {"a":"unmediated","b":"n","2":"rdamedia"},
+     "338": {"a":"sheet","b":"nb","2":"rdacarrier"}
+    }
+  },
+  {"subject_id":"24274","term_id":"18943","term":"Books","subfields":
+    {"336": {"a":"text","b":"txt","2":"rdacontent"},
+     "337": {"a":"unmediated","b":"n","2":"rdamedia"},
+     "338": {"a":"volume","b":"nc","2":"rdacarrier"}
+    }
+  },
+  {"subject_id":"1711","term_id":"1140","term":"Sound Recordings","subfields":
+    {"337": {"a":"audio","b":"s","2":"rdamedia"}
+    }
+  },
+  {"subject_id":"24276","term_id":"18945","term":"Born Digital","subfields":
+    {"337": {"a":"computer","b":"c","2":"rdamedia"}
+    }
+  },
+  {"subject_id":"4259","term_id":"2871","term":"Works of Art","subfields":
+    {"336": {"a":"still image","b":"sti","2":"rdacontent"},
+     "337": {"a":"unmediated","b":"n","2":"rdamedia"},
+     "338": {"a":"sheet","b":"nb","2":"rdacarrier"}
+    }
+  },
+  {"subject_id":"5417","term_id":"3641","term":"Posters","subfields":
+    {"336": {"a":"still image","b":"sti","2":"rdacontent"},
+     "337": {"a":"unmediated","b":"n","2":"rdamedia"},
+     "338": {"a":"sheet","b":"nb","2":"rdacarrier"}
+    }
+  }
+]
