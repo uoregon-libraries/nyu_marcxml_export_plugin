@@ -625,7 +625,7 @@ class MARCModel < ASpaceExport::ExportModel
                   else
                     nil
                   end
-
+      end
       unless marc_args.nil?
         text = prefix ? "#{prefix}: " : ""
         text += ASpaceExport::Utils.extract_note_text(note, @include_unpublished, true)
