@@ -574,13 +574,21 @@ class MARCModel < ASpaceExport::ExportModel
                 when 'separatedmaterial'; "Materials Separated from the Resource"
                 else; nil
                 end
-
-      marc_args = case note['type']
-
+      if !publish
+        marc_args = case note['type']
+                  when 'accessrestrict'
+                    ['506','a']
+                  when 'abstract'
+                    ['520', '3', ' ', 'a']
+                  else
+                    nil
+                  end
+      else
+        marc_args = case note['type']
                   when 'arrangement', 'fileplan'
                     ['351', 'b']
                   when 'odd', 'dimensions', 'physdesc', 'materialspec', 'physloc', 'phystech', 'physfacet', 'processinfo', 'separatedmaterial'
-                    ['500','a'] if publish
+                    ['500','a']
                   when 'accessrestrict'
                     ['506','a']
                     #when 'scopecontent'
