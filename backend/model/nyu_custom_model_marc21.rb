@@ -670,13 +670,16 @@ class MARCModel < ASpaceExport::ExportModel
   # use instead of ead loc
   def finding_aid_loc(publish, uri, title, id_0)
     if publish
+      return unless uri && !uri.empty?
+
+      public_url = URI.join("https://scua.uoregon.edu", uri).to_s
       df('555', ' ', ' ').with_sfs(
         ['a', "Finding aid available online:"],
-        ['u', "#{AppConfig[:public_url]}#{uri}"]
+        ['u', public_url]
       )
       df('856', '4', '2').with_sfs(
         ['z', "Connect to the online finding aid for this collection"],
-        ['u', "#{AppConfig[:public_url]}#{uri}"]
+        ['u', public_url]
       )
     else
       df('856', '4', '2').with_sfs(
