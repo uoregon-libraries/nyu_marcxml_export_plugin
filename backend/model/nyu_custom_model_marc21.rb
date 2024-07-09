@@ -347,15 +347,13 @@ class MARCModel < ASpaceExport::ExportModel
         sfs << [tag, t['term']]
       end
 
-      # code borrowed from Yale to export subject authority id
-      unless subject['authority_id'].nil?
-        sfs << ['0', subject['authority_id']]
-      end
-
+      # code adapted from Yale/above to export subject authority id
+      subfield_0 = (!subject['authority_id'].nil? && valid_zero_source? subject['source']) ? [0, build_uri(source, authority_id)] : nil
+      sfs << subfield_0 unless subfield_0.nil?
       
       # N.B. ind2 is an array at this point.
       if ind2[0] == '7'
-        sfs << ['2', subject['source']]
+        sfs << ['2', subject['source']] if valid_two_source? subject['source']
       end
 
       # adding this code snippet because I'm making ind2 an array
@@ -368,6 +366,10 @@ class MARCModel < ASpaceExport::ExportModel
 
       df!(code, ind1, ind2).with_sfs(*sfs)
     end
+  end
+
+  def valid_two_source?(source)
+    ['aat', 'lctgm', 'lcdgt'].include? source
   end
 
   def content_media_carrier(terms)
@@ -549,10 +551,10 @@ class MARCModel < ASpaceExport::ExportModel
         sfs << [(tag), t['term']]
       end
 
-      if ind2 == '7'
-        create_sfs2 = %w(local ingest)
-        sfs << ['2', 'local'] if create_sfs2.include?(subject['display_name']['source'])
-      end
+      #if ind2 == '7'
+      #  create_sfs2 = %w(local ingest)
+      #  sfs << ['2', 'local'] if create_sfs2.include?(subject['display_name']['source'])
+      #end
 
       df(code, ind1, ind2, i).with_sfs(*sfs)
     end
@@ -781,10 +783,23 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = authority_id ? [0, authority_id] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source? source) ? [0, build_uri(source, authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
+  end
+
+  def valid_zero_source?(source)
+    ["lcnaf", "loc"].include? source
+  end
+
+  def build_uri(source, id)
+    case source
+    when "lcnaf"
+      return "http://id.loc.gov/authorities/name/#{id}"
+    when "loc"
+      return "http://id.loc.gov/authorities/name/#{id}"
+    end
   end
 
   #For family types
@@ -835,7 +850,7 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = authority_id ? [0, authority_id] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source? source) ? [0, build_uri(source, authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
@@ -939,10 +954,25 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = authority_id ? [0, authority_id] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source? source) ? [0, build_uri(source, authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
   end
 
+  # use e and lower case label
+  # use 4 and 3 letter code
+  # archivesspace/common/locales/enums/en.yml#L1160
+  def handle_relators(relator_sfs, link)
+    return if ind2 != '0'
+
+    relator = I18n.t("enumerations.linked_agent_archival_record_relators.#{link}").downcase
+    relator_sfs << ['4', link]
+    unless relator.to_s.include?('translation missing')
+      relator_sfs << ['e', relator]
+    end
+
+    return relator_sfs
+
+  end
 end
