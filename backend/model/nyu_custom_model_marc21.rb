@@ -352,8 +352,10 @@ class MARCModel < ASpaceExport::ExportModel
       sfs << subfield_0 unless subfield_0.nil?
       
       # N.B. ind2 is an array at this point.
-      if ind2[0] == '7'
-        sfs << ['2', subject['source']] if valid_two_source? subject['source']
+      if ind2[0] == '7' && valid_two_source? subject['source']
+        sfs << ['2', subject['source']]
+      else
+        next # if not a valid source, remove term
       end
 
       # adding this code snippet because I'm making ind2 an array
