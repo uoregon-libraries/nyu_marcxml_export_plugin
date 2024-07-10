@@ -348,7 +348,7 @@ class MARCModel < ASpaceExport::ExportModel
       end
 
       # code adapted from Yale/above to export subject authority id
-      subfield_0 = (!subject['authority_id'].nil? && valid_zero_source? subject['source']) ? [0, build_uri(source, authority_id)] : nil
+      subfield_0 = (!subject['authority_id'].nil? && valid_zero_source? subject['source']) ? [0, build_uri(subject['source'], authority_id)] : nil
       sfs << subfield_0 unless subfield_0.nil?
       
       # N.B. ind2 is an array at this point.
@@ -783,7 +783,7 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = (!authority_id.nil? && valid_zero_source? source) ? [0, build_uri(source, authority_id)] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source? name['source']) ? [0, build_uri(name['source'], authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
@@ -796,9 +796,9 @@ class MARCModel < ASpaceExport::ExportModel
   def build_uri(source, id)
     case source
     when "lcnaf"
-      return "http://id.loc.gov/authorities/name/#{id}"
-    when "loc"
-      return "http://id.loc.gov/authorities/name/#{id}"
+      return "http://id.loc.gov/authorities/names/#{id}"
+    when "lcsh"
+      return "http://id.loc.gov/authorities/subjects/#{id}"
     end
   end
 
@@ -850,7 +850,7 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = (!authority_id.nil? && valid_zero_source? source) ? [0, build_uri(source, authority_id)] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source? name['source']) ? [0, build_uri(name['source'], authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
@@ -954,7 +954,7 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = (!authority_id.nil? && valid_zero_source? source) ? [0, build_uri(source, authority_id)] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source? ['source']) ? [0, build_uri(['source'], authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
@@ -964,8 +964,6 @@ class MARCModel < ASpaceExport::ExportModel
   # use 4 and 3 letter code
   # archivesspace/common/locales/enums/en.yml#L1160
   def handle_relators(relator_sfs, link)
-    return if ind2 != '0'
-
     relator = I18n.t("enumerations.linked_agent_archival_record_relators.#{link}").downcase
     relator_sfs << ['4', link]
     unless relator.to_s.include?('translation missing')
