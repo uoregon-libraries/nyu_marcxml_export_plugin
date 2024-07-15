@@ -352,12 +352,10 @@ class MARCModel < ASpaceExport::ExportModel
       sfs << subfield_0 unless subfield_0.nil?
       
       # N.B. ind2 is an array at this point.
-      if ind2[0] == '7' && valid_two_source? subject['source']
-        sfs << ['2', subject['source']]
-      else
-        next # if not a valid source, remove term
+      # remove term unless conditions met
+      if ind2[0] == '7'
+        valid_two_source?(subject['source']) ? sfs << ['2', subject['source']] : next
       end
-
       # adding this code snippet because I'm making ind2 an array
       # for code 630 if the title begins with an article
       if (ind2.is_a?(Array) && code == '630')
@@ -553,10 +551,10 @@ class MARCModel < ASpaceExport::ExportModel
         sfs << [(tag), t['term']]
       end
 
-      #if ind2 == '7'
-      #  create_sfs2 = %w(local ingest)
-      #  sfs << ['2', 'local'] if create_sfs2.include?(subject['display_name']['source'])
-      #end
+      if ind2 == '7'
+        create_sfs2 = %w(local ingest)
+        sfs << ['2', 'local'] if create_sfs2.include?(subject['display_name']['source'])
+      end
 
       df(code, ind1, ind2, i).with_sfs(*sfs)
     end
