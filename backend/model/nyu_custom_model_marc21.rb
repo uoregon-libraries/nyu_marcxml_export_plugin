@@ -348,7 +348,7 @@ class MARCModel < ASpaceExport::ExportModel
       end
 
       # code adapted from Yale/above to export subject authority id
-      subfield_0 = (!subject['authority_id'].nil? && valid_zero_source? subject['source']) ? [0, build_uri(subject['source'], authority_id)] : nil
+      subfield_0 = (!subject['authority_id'].nil? && valid_zero_source?(subject['source'])) ? [0, build_uri(subject['source'], authority_id)] : nil
       sfs << subfield_0 unless subfield_0.nil?
       
       # N.B. ind2 is an array at this point.
@@ -783,7 +783,7 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = (!authority_id.nil? && valid_zero_source? name['source']) ? [0, build_uri(name['source'], authority_id)] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source?(name['source'])) ? [0, build_uri(name['source'], authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
@@ -850,7 +850,7 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = (!authority_id.nil? && valid_zero_source? name['source']) ? [0, build_uri(name['source'], authority_id)] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source?(name['source'])) ? [0, build_uri(name['source'], authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
@@ -954,7 +954,7 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = (!authority_id.nil? && valid_zero_source? ['source']) ? [0, build_uri(['source'], authority_id)] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source?(['source'])) ? [0, build_uri(['source'], authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
