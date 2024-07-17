@@ -399,7 +399,7 @@ class MARCModel < ASpaceExport::ExportModel
   def handle_primary_creator(linked_agents)
     link = linked_agents.find{|a| a['role'] == 'creator'}
     return nil unless link
-    return nil unless link["_resolved"]["publish"] || @include_unpublished
+    return nil unless link["_resolved"]["publish"] #remove include_unpublished
 
     creator = link['_resolved']
     name = creator['display_name']
@@ -442,7 +442,7 @@ class MARCModel < ASpaceExport::ExportModel
     creators = creators + linked_agents.select {|a| a['role'] == 'source'}
 
     creators.each_with_index do |link, i|
-      next unless link["_resolved"]["publish"] || @include_unpublished
+      next unless link["_resolved"]["publish"] # remove @include_unpublished
 
       creator = link['_resolved']
       name = creator['display_name']
@@ -790,7 +790,7 @@ class MARCModel < ASpaceExport::ExportModel
   end
 
   def valid_zero_source?(source)
-    ["lcnaf", "loc"].include? source
+    ["lcnaf", "lcsh"].include? source
   end
 
   def build_uri(source, id)
