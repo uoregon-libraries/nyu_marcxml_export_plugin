@@ -348,7 +348,7 @@ class MARCModel < ASpaceExport::ExportModel
       end
 
       # code adapted from Yale/above to export subject authority id
-      subfield_0 = (!subject['authority_id'].nil? && valid_zero_source?(subject['source'])) ? [0, build_uri(subject['source'], authority_id)] : nil
+      subfield_0 = (!subject['authority_id'].nil? && valid_zero_source?(subject['source'])) ? [0, build_uri(subject['source'], subject['authority_id'])] : nil
       sfs << subfield_0 unless subfield_0.nil?
       
       # N.B. ind2 is an array at this point.
