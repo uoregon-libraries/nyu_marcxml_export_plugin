@@ -347,17 +347,15 @@ class MARCModel < ASpaceExport::ExportModel
         sfs << [tag, t['term']]
       end
 
-      # code borrowed from Yale to export subject authority id
-      unless subject['authority_id'].nil?
-        sfs << ['0', subject['authority_id']]
-      end
-
+      # code adapted from Yale/above to export subject authority id
+      subfield_0 = (!subject['authority_id'].nil? && valid_zero_source?(subject['source'])) ? [0, build_uri(subject['source'], subject['authority_id'])] : nil
+      sfs << subfield_0 unless subfield_0.nil?
       
       # N.B. ind2 is an array at this point.
+      # remove term unless conditions met
       if ind2[0] == '7'
-        sfs << ['2', subject['source']]
+        valid_two_source?(subject['source']) ? sfs << ['2', subject['source']] : next
       end
-
       # adding this code snippet because I'm making ind2 an array
       # for code 630 if the title begins with an article
       if (ind2.is_a?(Array) && code == '630')
@@ -368,6 +366,10 @@ class MARCModel < ASpaceExport::ExportModel
 
       df!(code, ind1, ind2).with_sfs(*sfs)
     end
+  end
+
+  def valid_two_source?(source)
+    ['aat', 'lctgm', 'lcdgt'].include? source
   end
 
   def content_media_carrier(terms)
@@ -397,7 +399,7 @@ class MARCModel < ASpaceExport::ExportModel
   def handle_primary_creator(linked_agents)
     link = linked_agents.find{|a| a['role'] == 'creator'}
     return nil unless link
-    return nil unless link["_resolved"]["publish"] || @include_unpublished
+    return nil unless link["_resolved"]["publish"] #remove include_unpublished
 
     creator = link['_resolved']
     name = creator['display_name']
@@ -440,7 +442,7 @@ class MARCModel < ASpaceExport::ExportModel
     creators = creators + linked_agents.select {|a| a['role'] == 'source'}
 
     creators.each_with_index do |link, i|
-      next unless link["_resolved"]["publish"] || @include_unpublished
+      next unless link["_resolved"]["publish"] # remove @include_unpublished
 
       creator = link['_resolved']
       name = creator['display_name']
@@ -781,10 +783,23 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = authority_id ? [0, authority_id] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source?(name['source'])) ? [0, build_uri(name['source'], authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
+  end
+
+  def valid_zero_source?(source)
+    ["lcnaf", "lcsh"].include? source
+  end
+
+  def build_uri(source, id)
+    case source
+    when "lcnaf"
+      return "http://id.loc.gov/authorities/names/#{id}"
+    when "lcsh"
+      return "http://id.loc.gov/authorities/subjects/#{id}"
+    end
   end
 
   #For family types
@@ -835,7 +850,7 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = authority_id ? [0, authority_id] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source?(name['source'])) ? [0, build_uri(name['source'], authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
@@ -939,10 +954,23 @@ class MARCModel < ASpaceExport::ExportModel
     name_fields.push(subfield_4) unless subfield_4.nil?
 
     authority_id = find_authority_id(agent['names'])
-    subfield_0 = authority_id ? [0, authority_id] : nil
+    subfield_0 = (!authority_id.nil? && valid_zero_source?(['source'])) ? [0, build_uri(['source'], authority_id)] : nil
     name_fields.push(subfield_0) unless subfield_0.nil?
 
     return name_fields
   end
 
+  # use e and lower case label
+  # use 4 and 3 letter code
+  # archivesspace/common/locales/enums/en.yml#L1160
+  def handle_relators(relator_sfs, link)
+    relator = I18n.t("enumerations.linked_agent_archival_record_relators.#{link}").downcase
+    relator_sfs << ['4', link]
+    unless relator.to_s.include?('translation missing')
+      relator_sfs << ['e', relator]
+    end
+
+    return relator_sfs
+
+  end
 end
