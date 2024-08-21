@@ -18,6 +18,8 @@ class MARCCustomFieldSerialize
 
   def controlfields
     cf = []
+    tag_001 = add_001_tag
+    cf << tag_001 unless tag_001.nil?
     cf << add_005_tag
     @record.controlfields = cf
   end
@@ -106,6 +108,14 @@ class MARCCustomFieldSerialize
     {tag:tag, text: text}
   end
 
+  def add_001_tag
+    value = @record.aspace_record['json']['user_defined']['string_1']
+    return if value.nil?
+
+    controlfield_hsh = get_controlfield_hash('001','ocn' + value)
+    cf = NYUCustomTag.new(controlfield_hsh)
+    cf.add_controlfield_tag
+  end
 
   def add_005_tag
     value = format_timestamp
