@@ -406,10 +406,17 @@ class MARCModel < ASpaceExport::ExportModel
     map_33x.select{|x| x['term_id'] == id}.first
   end
 
+  def lookup_publish(linked_agent)
+    id = linked_agent['ref'].split('/').last
+    klass = linked_agent['_resolved']['agent_type'].camelize.constantize
+    agent = klass.find(id: id)
+    agent.publish == 1 ? true : false
+  end
+
   def handle_primary_creator(linked_agents)
     link = linked_agents.find{|a| a['role'] == 'creator'}
     return nil unless link
-    return nil unless link["_resolved"]["publish"] #remove include_unpublished
+    return nil unless lookup_publish(link)
 
     creator = link['_resolved']
     name = creator['display_name']
@@ -452,7 +459,7 @@ class MARCModel < ASpaceExport::ExportModel
     creators = creators + linked_agents.select {|a| a['role'] == 'source'}
 
     creators.each_with_index do |link, i|
-      next unless link["_resolved"]["publish"] # remove @include_unpublished
+      next unless lookup_publish(link)
 
       creator = link['_resolved']
       name = creator['display_name']
