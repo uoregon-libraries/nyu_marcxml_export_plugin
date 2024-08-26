@@ -24,7 +24,7 @@ class MARCModel < ASpaceExport::ExportModel
     [:publish, :uri, :title, :id_0] => :finding_aid_loc,
     [:id, :jsonmodel_type] => :handle_ark,
     [:notes, :publish] => :handle_notes,
-    :finding_aid_description_rules => df_handler('fadr', '040', ' ', ' ', 'e')
+    :finding_aid_description_rules => :finding_aid_desc_rules
   }
 
   attr_accessor :leader_string
@@ -49,6 +49,12 @@ class MARCModel < ASpaceExport::ExportModel
         @subfields << subfield unless subfield.empty?
       end
 
+      return self
+    end
+
+    def insert_sf(index, sf)
+      subfield = @@subfield.new(*sf)
+      @subfields.insert(index, subfield)
       return self
     end
 
@@ -291,6 +297,10 @@ class MARCModel < ASpaceExport::ExportModel
     #  end
     #end
 
+  end
+
+  def finding_aid_desc_rules(val)
+    df('040', ' ', ' ').insert_sf(2, ['e', val])
   end
 
   def source_to_code(source)
