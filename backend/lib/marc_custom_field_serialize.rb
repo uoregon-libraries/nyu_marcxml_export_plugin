@@ -112,6 +112,8 @@ class MARCCustomFieldSerialize
   end
 
   def add_001_tag
+    return if @record.aspace_record['json']['user_defined'].nil?
+
     value = @record.aspace_record['json']['user_defined']['string_1']
     return if value.nil?
 
