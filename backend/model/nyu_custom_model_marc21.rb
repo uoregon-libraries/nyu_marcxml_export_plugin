@@ -179,6 +179,7 @@ class MARCModel < ASpaceExport::ExportModel
 
   def handle_title(title, linked_agents, dates)
     creator = linked_agents.find {|a| a['role'] == 'creator'}
+    creator = nil unless lookup_publish(creator)
     date_codes = []
 
     # process dates first, if defined.
