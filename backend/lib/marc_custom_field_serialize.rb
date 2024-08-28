@@ -112,9 +112,9 @@ class MARCCustomFieldSerialize
   end
 
   def add_001_tag
-    return if @record.aspace_record['json']['user_defined'].nil?
+    return if @record.aspace_record['user_defined'].nil?
 
-    value = @record.aspace_record['json']['user_defined']['string_1']
+    value = @record.aspace_record['user_defined']['string_1']
     return if value.nil?
 
     controlfield_hsh = get_controlfield_hash('001', oclc_prefix(value) + value)
