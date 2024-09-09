@@ -23,7 +23,7 @@ class MARCCustomFieldSerialize
       cf << tag_001
       cf << add_003_tag("OCoLC")
     end
-    cf << add_005_tag
+    # removed 005, not wanted for upload to OCLC
     @record.controlfields = cf
   end
 
