@@ -16,7 +16,7 @@ class MARCModel < ASpaceExport::ExportModel
     :linked_agents => :handle_agents,
     :subjects => :handle_subjects,
     :extents => :handle_extents,
-    :lang_materials => :handle_languages
+    [:lang_materials, :publish] => :handle_languages
   }
 
   @resource_map = {
@@ -226,7 +226,7 @@ class MARCModel < ASpaceExport::ExportModel
   end
 
 
-  def handle_languages(lang_materials)
+  def handle_languages(lang_materials, publish)
 
     # ANW-697: The Language subrecord code values should be exported in repeating subfield $a entries in the MARC 041 field.
 
@@ -244,7 +244,7 @@ class MARCModel < ASpaceExport::ExportModel
 
     if language_notes
       language_notes.each do |note|
-        handle_notes(note)
+        handle_notes(note, publish)
       end
     end
 
