@@ -813,6 +813,8 @@ class MARCModel < ASpaceExport::ExportModel
 
   def build_uri(source, id)
     case source
+    when "naf"
+      return "http://id.loc.gov/authorities/names/#{id}"
     when "lcnaf"
       return "http://id.loc.gov/authorities/names/#{id}"
     when "lcsh"
